@@ -21,7 +21,7 @@ from visualizer import out_image
 
 def main():
     parser = argparse.ArgumentParser(description='chainer implementation of pix2pix')
-    parser.add_argument('--batchsize', '-b', type=int, default=1,
+    parser.add_argument('--batchsize', '-b', type=int, default=4,
                         help='Number of images in each mini-batch')
     parser.add_argument('--epoch', '-e', type=int, default=200,
                         help='Number of sweeps over the dataset to train')
@@ -35,7 +35,7 @@ def main():
                         help='Resume the training from snapshot')
     parser.add_argument('--seed', type=int, default=0,
                         help='Random seed')
-    parser.add_argument('--snapshot_interval', type=int, default=1000,
+    parser.add_argument('--snapshot_interval', type=int, default=250,
                         help='Interval of snapshot')
     parser.add_argument('--display_interval', type=int, default=100,
                         help='Interval of displaying log to console')
@@ -67,12 +67,12 @@ def main():
     opt_dec = make_optimizer(dec)
     opt_dis = make_optimizer(dis)
 
-    train_d = FacadeDataset(args.dataset, data_range=(1,1000))
-    test_d = FacadeDataset(args.dataset, data_range=(1000,1500))
-    #train_iter = chainer.iterators.MultiprocessIterator(train_d, args.batchsize, n_processes=4)
-    #test_iter = chainer.iterators.MultiprocessIterator(test_d, args.batchsize, n_processes=4)
-    train_iter = chainer.iterators.SerialIterator(train_d, args.batchsize)
-    test_iter = chainer.iterators.SerialIterator(test_d, args.batchsize)
+    train_d = FacadeDataset(args.dataset, data_range=(1,2000))
+    test_d = FacadeDataset(args.dataset, data_range=(2000,2400))
+    train_iter = chainer.iterators.MultiprocessIterator(train_d, args.batchsize, n_processes=2)
+    test_iter = chainer.iterators.MultiprocessIterator(test_d, args.batchsize, n_processes=2)
+    #train_iter = chainer.iterators.SerialIterator(train_d, args.batchsize)
+    #test_iter = chainer.iterators.SerialIterator(test_d, args.batchsize)
 
     # Set up a trainer
     updater = FacadeUpdater(

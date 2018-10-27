@@ -16,8 +16,8 @@ from net import Encoder
 from net import Decoder
 from updater import FacadeUpdater
 
-from facade_dataset import FacadeDataset
-from facade_visualizer import out_image
+from dataset import FacadeDataset
+from visualizer import out_image
 
 def main():
     parser = argparse.ArgumentParser(description='chainer implementation of pix2pix')
@@ -25,9 +25,9 @@ def main():
                         help='Number of images in each mini-batch')
     parser.add_argument('--epoch', '-e', type=int, default=200,
                         help='Number of sweeps over the dataset to train')
-    parser.add_argument('--gpu', '-g', type=int, default=-1,
+    parser.add_argument('--gpu', '-g', type=int, default=0,
                         help='GPU ID (negative value indicates CPU)')
-    parser.add_argument('--dataset', '-i', default='./facade/base',
+    parser.add_argument('--dataset', '-i', default='./azuren',
                         help='Directory of image files.')
     parser.add_argument('--out', '-o', default='result',
                         help='Directory to output the result')
@@ -47,9 +47,9 @@ def main():
     print('')
 
     # Set up a neural network to train
-    enc = Encoder(in_ch=12)
+    enc = Encoder(in_ch=1)
     dec = Decoder(out_ch=3)
-    dis = Discriminator(in_ch=12, out_ch=3)
+    dis = Discriminator(in_ch=1, out_ch=3)
     
     if args.gpu >= 0:
         chainer.cuda.get_device(args.gpu).use()  # Make a specified GPU current
@@ -67,8 +67,8 @@ def main():
     opt_dec = make_optimizer(dec)
     opt_dis = make_optimizer(dis)
 
-    train_d = FacadeDataset(args.dataset, data_range=(1,300))
-    test_d = FacadeDataset(args.dataset, data_range=(300,379))
+    train_d = FacadeDataset(args.dataset, data_range=(1,1000))
+    test_d = FacadeDataset(args.dataset, data_range=(1000,1500))
     #train_iter = chainer.iterators.MultiprocessIterator(train_d, args.batchsize, n_processes=4)
     #test_iter = chainer.iterators.MultiprocessIterator(test_d, args.batchsize, n_processes=4)
     train_iter = chainer.iterators.SerialIterator(train_d, args.batchsize)

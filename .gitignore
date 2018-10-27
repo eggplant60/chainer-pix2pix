@@ -1,0 +1,10 @@
+__pycache__
+*.pyc
+*.ipynb
+.ipynb_checkpoints
+
+image
+facade
+azuren
+
+result*
